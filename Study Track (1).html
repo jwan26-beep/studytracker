@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12161C">
+<title>Study Track</title>
+<style>
+:root{--bg:#12161c;--card:#1a2029;--ink:#e6ebf2;--mute:#8d99ab;--line:#283140;--acc:#5aa9ff;--on:#0b1220;--ok:#4cc38a;--bad:#ef6f78;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f4f8;--card:#fff;--ink:#16202e;--mute:#5d6b7e;--line:#d8e0ea;--acc:#1d6fd6;--on:#fff;--ok:#1b9a63;--bad:#c9444d;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f1f4f8;--card:#fff;--ink:#16202e;--mute:#5d6b7e;--line:#d8e0ea;--acc:#1d6fd6;--on:#fff;--ok:#1b9a63;--bad:#c9444d;color-scheme:light}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;max-width:760px;margin:0 auto;padding:18px 16px 8px}
+h1{font-size:1.25rem;margin:0}
+h2{font-size:1.05rem;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 12px;font-size:.9rem}
+nav{display:flex;gap:6px;max-width:760px;margin:0 auto;padding:0 16px;border-bottom:1px solid var(--line)}
+nav button{background:none;border:0;border-bottom:2px solid transparent;color:var(--mute);font:600 .95rem inherit;font-family:inherit;padding:10px 12px;cursor:pointer}
+nav button[aria-selected=true]{color:var(--ink);border-color:var(--acc)}
+main{max-width:760px;margin:0 auto;padding:16px}
+section.tab[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+label{display:block;font-size:.82rem;color:var(--mute);margin:0 0 4px}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.g{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+.row>*{flex:1 1 120px}
+.btn{font:600 .95rem inherit;font-family:inherit;border-radius:8px;padding:10px 14px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.btn.p{background:var(--acc);border-color:var(--acc);color:var(--on)}
+.btn.d{color:var(--bad)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.clock{font:700 clamp(2.6rem,12vw,3.8rem)/1.1 ui-monospace,"SF Mono",Menlo,monospace;text-align:center;margin:12px 0 2px;font-variant-numeric:tabular-nums}
+.st{text-align:center;color:var(--mute);margin:0 0 12px}
+.run .st{color:var(--ok)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:1.5rem}
+.stat span{color:var(--mute);font-size:.82rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chips button{padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--ink);cursor:pointer;font:inherit}
+.chips button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:var(--on);font-weight:600}
+.bars{display:flex;gap:6px;align-items:flex-end;height:90px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:.7rem;color:var(--mute)}
+.bar i{display:block;width:100%;background:var(--acc);border-radius:4px 4px 0 0;min-height:2px}
+.chain{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.chain button{aspect-ratio:1;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--mute);font-size:.7rem;cursor:pointer}
+.chain button.t{outline:1px solid var(--acc)}
+.hb{margin:8px 0}
+.hb div{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.hb i{display:block;height:100%;background:var(--acc)}
+.hb p{margin:0 0 3px;display:flex;justify-content:space-between}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+li small{display:block;color:var(--mute)}
+li button{background:none;border:0;color:var(--bad);cursor:pointer;font:inherit}
+.empty{color:var(--mute);margin:6px 0}
+body.gate header,body.gate nav,body.gate main{display:none}
+#auth{display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px}
+body.gate #auth{display:flex}
+.auth-box{width:100%;max-width:400px}
+.auth-box h1{font-size:1.5rem;margin-bottom:4px}
+.auth-box .card{margin-top:14px}
+.auth-box .seg{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:10px;margin-bottom:16px}
+.auth-box .seg button{flex:1;border:0;background:none;color:var(--mute);font:600 .95rem inherit;font-family:inherit;padding:8px;border-radius:7px;cursor:pointer}
+.auth-box .seg button[aria-selected=true]{background:var(--card);color:var(--ink)}
+.auth-box .f{margin-bottom:12px}
+#a-err{color:var(--bad);min-height:1.4em;margin:0 0 8px;font-size:.88rem}
+.who{display:flex;gap:10px;align-items:center}
+.who .btn{padding:5px 10px;font-size:.85rem}
+</style>
+</head>
+<body class="gate">
+<div id="auth">
+  <div class="auth-box">
+    <h1>Study Track</h1>
+    <p class="sub">Sign in to pick up where you left off.</p>
+    <div class="card">
+      <div class="seg" role="tablist" aria-label="Account">
+        <button type="button" role="tab" id="a-in" aria-selected="true">Sign in</button>
+        <button type="button" role="tab" id="a-up" aria-selected="false">Create account</button>
+      </div>
+      <div class="f" id="f-name" hidden><label for="a-name">Your name</label><input id="a-name" autocomplete="name" maxlength="40"></div>
+      <div class="f"><label for="a-email">Email</label><input id="a-email" type="email" autocomplete="email"></div>
+      <div class="f"><label for="a-pass">Password</label><input id="a-pass" type="password" autocomplete="current-password"></div>
+      <div class="f" id="f-pass2" hidden><label for="a-pass2">New password again</label><input id="a-pass2" type="password" autocomplete="new-password"></div>
+      <p id="a-err" role="alert"></p>
+      <button type="button" class="btn p" id="a-go" style="width:100%">Sign in</button>
+      <p class="sub" style="margin:12px 0 0">Accounts are stored in this browser only, on this device.</p>
+    </div>
+  </div>
+</div>
+<header><h1>Study Track</h1><div class="who"><span class="sub" id="today-label" style="margin:0"></span><span id="who-name" class="sub" style="margin:0"></span><button type="button" class="btn" id="signout">Sign out</button></div></header>
+<nav role="tablist" aria-label="Sections">
+  <button role="tab" aria-selected="true" data-t="today">Today</button>
+  <button role="tab" aria-selected="false" data-t="stats">My stats</button>
+  <button role="tab" aria-selected="false" data-t="setup">Setup</button>
+</nav>
+<main>
+
+<section class="tab" id="tab-today">
+  <div class="stats">
+    <div class="stat"><b id="s-today">0m</b><span>Studied today</span></div>
+    <div class="stat"><b id="s-goal">0h</b><span>Goal for today</span></div>
+    <div class="stat"><b id="s-streak">0</b><span>Day streak</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Today</h2>
+    <div class="row">
+      <div><label for="goal-day">Goal for this day (hours)</label><input id="goal-day" type="number" min="0" step="0.5"></div>
+      <button class="btn" id="goal-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="card" id="timer-card">
+    <h2>Session timer</h2>
+    <div class="clock" id="clock">00:00:00</div>
+    <p class="st" id="st">Nothing running</p>
+    <label for="t-subject">Subject</label><select id="t-subject"></select>
+    <div class="row" style="margin-top:12px">
+      <button class="btn p" id="t-start">Start</button>
+      <button class="btn" id="t-finish" disabled>Finish and log</button>
+      <button class="btn d" id="t-discard" disabled>Discard</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Log a block by hand</h2>
+    <p class="sub">For anything you did not time</p>
+    <div class="g">
+      <div><label for="m-subject">Subject</label><select id="m-subject"></select></div>
+      <div><label for="m-min">Minutes</label><input id="m-min" type="number" min="1" max="720"></div>
+    </div>
+    <div class="chips" id="quick"></div>
+    <label for="m-note">What did you do? (optional)</label><input id="m-note" maxlength="120">
+    <button class="btn p" id="m-add" style="margin-top:10px">Add</button>
+  </div>
+
+  <div class="card"><h2>Your last 7 days</h2><div class="bars" id="week" role="img" aria-label="Hours studied in the last 7 days"></div></div>
+  <div class="card"><h2>Logged this day</h2><ul id="day-log"></ul></div>
+</section>
+
+<section class="tab" id="tab-stats" hidden>
+  <div class="stats">
+    <div class="stat"><b id="a-total">0.0</b><span>Total hours logged</span></div>
+    <div class="stat"><b id="a-days">0</b><span>Days with something logged</span></div>
+    <div class="stat"><b id="a-long">0</b><span>Longest streak</span></div>
+    <div class="stat"><b id="a-avg">0.0</b><span>Average per active day</span></div>
+  </div>
+  <div class="card"><h2>Your chain</h2><p class="sub">Brighter means more of that day's goal. Click a day to log it.</p><div class="chain" id="chain"></div></div>
+  <div class="card"><h2>Hours by subject</h2><div id="by-subj"></div></div>
+  <div class="card"><h2>Your session log</h2><ul id="all-log"></ul></div>
+</section>
+
+<section class="tab" id="tab-setup" hidden>
+  <div class="card">
+    <h2>Subjects</h2>
+    <p class="sub">Add the courses you study. Exam dates are optional and show a countdown.</p>
+    <h2 style="font-size:.95rem;margin-top:12px">Choose from the subject list</h2>
+    <p class="sub">Tap a subject to add it. Tap again to remove it.</p>
+    <div class="chips pick" id="pick"></div>
+    <button class="btn" id="pick-all" style="margin-bottom:14px">Add all subjects</button>
+    <h2 style="font-size:.95rem">Not on the list? Type one in</h2>
+    <div class="row"><div><label for="n-name">Subject</label><input id="n-name" maxlength="40"></div>
+    <div><label for="n-exam">Exam date</label><input id="n-exam" type="date"></div>
+    <button class="btn p" id="n-add">Add</button></div>
+    <ul id="subj-list" style="margin-top:10px"></ul>
+  </div>
+  <div class="card">
+    <h2>Standing goals</h2>
+    <p class="sub">Hours per day by weekday. A goal of 0 is a rest day and never breaks a streak.</p>
+    <div class="g" id="goals"></div>
+    <button class="btn p" id="g-save" style="margin-top:12px">Save goals</button>
+  </div>
+  <div class="card">
+    <h2>Your data</h2>
+    <p class="sub">Everything is stored in this browser only.</p>
+    <div class="row"><button class="btn" id="export">Export my data</button><button class="btn d" id="wipe">Delete all my sessions</button></div>
+  </div>
+</section>
+</main>
+
+<script>
+function boot(UID,NAME){
+var $=function(i){return document.getElementById(i)};
+var K="study-track-v2:"+UID;
+$("who-name").textContent=NAME;document.body.classList.remove("gate");
+var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var S={subjects:[],goals:{0:0,1:2,2:2,3:2,4:2,5:1,6:3},over:{},sessions:[]};
+try{var r=JSON.parse(localStorage.getItem(K)||localStorage.getItem("study-track-v2")||"null");if(r)S=r}catch(e){}
+var LIST=["Biology","Physics","Chemistry","Science Extension","Mathematics Standard 1","Mathematics Standard 2","Mathematics Advanced","Mathematics Extension 1","Mathematics Extension 2","History","Geography","Legal Studies","Studies of Religion","Business Studies","Enterprise Computing","Japanese Beginners","Engineering Studies","Software Engineering"];
+if(!S.seeded){S.seeded=1;if(!S.subjects.length)S.subjects=LIST.map(function(n,i){return {id:i+1,name:n,exam:""}})}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function key(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function parse(k){var p=k.split("-");return new Date(+p[0],+p[1]-1,+p[2])}
+function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
+function pad(n){return String(n).padStart(2,"0")}
+function clock(ms){var s=Math.floor(ms/1000);return pad(Math.floor(s/3600))+":"+pad(Math.floor(s/60)%60)+":"+pad(s%60)}
+function dur(m){var h=Math.floor(m/60);return h?h+"h "+(m%60)+"m":m+"m"}
+var sel=key(new Date()),todayK=sel;
+function goalFor(k){if(S.over[k]!=null)return +S.over[k];var g=S.goals[parse(k).getDay()];return g==null?0:+g}
+function mins(k){return S.sessions.reduce(function(a,s){return s.date===k?a+s.min:a},0)}
+function met(k){var g=goalFor(k);return g===0?null:mins(k)/60>=g}
+function streak(){var n=0,d=new Date();for(var i=0;i<500;i++,d=addDays(d,-1)){var k=key(d),m=met(k);if(m===null)continue;if(m)n++;else if(k!==todayK)break}return n}
+function longest(){if(!S.sessions.length)return 0;var first=S.sessions.reduce(function(a,s){return s.date<a?s.date:a},todayK),best=0,cur=0;
+ for(var d=parse(first);key(d)<=todayK;d=addDays(d,1)){var m=met(key(d));if(m===null)continue;if(m){cur++;best=Math.max(best,cur)}else cur=0}return best}
+
+/* tabs */
+var tabs=document.querySelectorAll("nav button");
+tabs.forEach(function(b){b.onclick=function(){tabs.forEach(function(x){x.setAttribute("aria-selected",x===b)});
+ ["today","stats","setup"].forEach(function(t){$("tab-"+t).hidden=t!==b.dataset.t});draw()}});
+
+/* timer */
+var el=0,at=null,iv=null;
+function tnow(){return el+(at?Date.now()-at:0)}
+function tui(){var run=!!at;$("timer-card").classList.toggle("run",run);
+ $("clock").textContent=clock(tnow());
+ $("t-start").textContent=run?"Pause":(el>0?"Resume":"Start");
+ $("t-finish").disabled=$("t-discard").disabled=tnow()<1000&&!run;
+ $("st").textContent=run?"Studying now":(el>0?"Paused":"Nothing running");
+ document.title=run?clock(tnow())+" · Study Track":"Study Track"}
+$("t-start").onclick=function(){if(at){el+=Date.now()-at;at=null;clearInterval(iv)}else{at=Date.now();iv=setInterval(tui,250)}tui()};
+$("t-discard").onclick=function(){if(tnow()>5000&&!confirm("Discard this session?"))return;clearInterval(iv);at=null;el=0;tui()};
+$("t-finish").onclick=function(){var m=Math.max(1,Math.round(tnow()/60000));
+ add($("t-subject").value,m,"");clearInterval(iv);at=null;el=0;tui()};
+
+function add(subject,m,note,date){S.sessions.unshift({id:Date.now()+Math.random(),date:date||todayK,subject:subject||"General",min:m,note:note||""});save();draw()}
+
+/* manual */
+[25,45,60,90,120].forEach(function(n){var b=document.createElement("button");b.textContent=n;b.onclick=function(){$("m-min").value=n};$("quick").appendChild(b)});
+$("m-add").onclick=function(){var m=Math.round(+$("m-min").value);if(!(m>0))return $("m-min").focus();
+ add($("m-subject").value,m,$("m-note").value.trim(),sel);$("m-min").value="";$("m-note").value=""};
+
+/* goals */
+$("goal-day").onchange=function(){var v=$("goal-day").value;if(v==="")delete S.over[sel];else S.over[sel]=Math.max(0,+v);save();draw()};
+$("goal-reset").onclick=function(){delete S.over[sel];save();draw()};
+$("g-save").onclick=function(){DAYS.forEach(function(_,i){var v=+$("gd"+i).value;S.goals[i]=v>=0?v:0});save();draw();$("g-save").textContent="Saved";setTimeout(function(){$("g-save").textContent="Save goals"},1200)};
+
+/* subjects */
+$("n-add").onclick=function(){var n=$("n-name").value.trim();if(!n)return $("n-name").focus();
+ S.subjects.push({id:Date.now(),name:n,exam:$("n-exam").value});$("n-name").value="";$("n-exam").value="";save();draw()};
+$("export").onclick=function(){var a=document.createElement("a");a.href="data:application/json,"+encodeURIComponent(JSON.stringify(S,null,1));a.download="study-track.json";a.click()};
+$("wipe").onclick=function(){if(confirm("Delete every logged session? Subjects and goals stay.")){S.sessions=[];save();draw()}};
+
+function opts(){var names=S.subjects.map(function(s){return s.name});if(!names.length)names=["General"];
+ return names.map(function(n){return "<option>"+esc(n)+"</option>"}).join("")}
+function keepSel(id,html){var e=$(id),v=e.value;e.innerHTML=html;if(v)e.value=v}
+function logList(arr,withDate){return arr.length?arr.map(function(s){return "<li><div>"+esc(s.subject)+"<small>"+(withDate?s.date+" · ":"")+(s.note?esc(s.note):"No note")+"</small></div><div><b>"+dur(s.min)+"</b> <button data-del=\""+s.id+"\" aria-label=\"Delete session\">Delete</button></div></li>"}).join(""):"<p class=\"empty\">Nothing logged yet.</p>"}
+
+function draw(){
+ var d=parse(sel);$("today-label").textContent=(sel===todayK?"Today · ":"")+DAYS[d.getDay()]+" "+d.getDate()+"/"+(d.getMonth()+1);
+ keepSel("t-subject",opts());keepSel("m-subject",opts());
+ var m=mins(sel);$("s-today").textContent=dur(m);$("s-goal").textContent=goalFor(sel)+"h";$("s-streak").textContent=streak();
+ $("goal-day").value=S.over[sel]!=null?S.over[sel]:"";$("goal-day").placeholder=String(S.goals[d.getDay()]);
+ /* week */
+ var wk="",mx=1;var vals=[];for(var i=6;i>=0;i--){var dd=addDays(new Date(),-i),h=mins(key(dd))/60;vals.push([dd,h]);mx=Math.max(mx,h)}
+ vals.forEach(function(v){wk+="<div class=\"bar\"><span>"+(v[1]?v[1].toFixed(1):"")+"</span><i style=\"height:"+Math.round(v[1]/mx*70)+"px\"></i><span>"+DAYS[v[0].getDay()].slice(0,3)+"</span></div>"});
+ $("week").innerHTML=wk;
+ $("day-log").innerHTML=logList(S.sessions.filter(function(s){return s.date===sel}));
+ /* stats */
+ var tot=S.sessions.reduce(function(a,s){return a+s.min},0),act={};S.sessions.forEach(function(s){act[s.date]=1});var nd=Object.keys(act).length;
+ $("a-total").textContent=(tot/60).toFixed(1);$("a-days").textContent=nd;$("a-long").textContent=longest();$("a-avg").textContent=nd?(tot/60/nd).toFixed(1):"0.0";
+ var ch="",start=addDays(new Date(),-34);start=addDays(start,-start.getDay());
+ for(var x=start;key(x)<=todayK;x=addDays(x,1)){var k=key(x),g=goalFor(k),p=g?Math.min(1,mins(k)/60/g):(mins(k)?1:0);
+  ch+="<button data-day=\""+k+"\" class=\""+(k===sel?"t":"")+"\" style=\"background:"+(p?"color-mix(in srgb,var(--ok) "+Math.round(25+p*75)+"%,var(--bg))":"")+"\" aria-label=\""+k+"\">"+x.getDate()+"</button>"}
+ $("chain").innerHTML=ch;
+ var bs={};S.sessions.forEach(function(s){bs[s.subject]=(bs[s.subject]||0)+s.min});var ks=Object.keys(bs).sort(function(a,b){return bs[b]-bs[a]}),top=ks.length?bs[ks[0]]:1;
+ $("by-subj").innerHTML=ks.length?ks.map(function(k){return "<div class=\"hb\"><p><span>"+esc(k)+"</span><span>"+(bs[k]/60).toFixed(1)+"h</span></p><div><i style=\"width:"+Math.round(bs[k]/top*100)+"%\"></i></div></div>"}).join(""):"<p class=\"empty\">Log a session to see this.</p>";
+ $("all-log").innerHTML=logList(S.sessions.slice(0,60),true);
+ /* setup */
+ $("subj-list").innerHTML=S.subjects.length?S.subjects.map(function(s){var left="";if(s.exam){var n=Math.ceil((parse(s.exam)-parse(todayK))/864e5);left=n>=0?n+" days to exam":"Exam passed"}
+  return "<li><div>"+esc(s.name)+"<small>"+(left||"No exam date")+"</small></div><button data-sub=\""+s.id+"\">Delete</button></li>"}).join(""):"<p class=\"empty\">No subjects yet. Add your first one above.</p>";
+ $("pick").innerHTML=LIST.map(function(n){var on=S.subjects.some(function(s){return s.name===n});return "<button data-pick=\""+n+"\" aria-pressed=\""+on+"\">"+n+"</button>"}).join("");
+ if(!$("goals").children.length)$("goals").innerHTML=DAYS.map(function(n,i){return "<div><label for=\"gd"+i+"\">"+n+"</label><input id=\"gd"+i+"\" type=\"number\" min=\"0\" step=\"0.5\"></div>"}).join("");
+ DAYS.forEach(function(_,i){if(document.activeElement!==$("gd"+i))$("gd"+i).value=S.goals[i]});
+}
+function has(n){return S.subjects.some(function(s){return s.name===n})}
+$("pick-all").onclick=function(){LIST.forEach(function(n){if(!has(n))S.subjects.push({id:Date.now()+Math.random(),name:n,exam:""})});save();draw()};
+document.addEventListener("click",function(e){var t=e.target;
+ if(t.dataset.pick){var n=t.dataset.pick;if(has(n))S.subjects=S.subjects.filter(function(s){return s.name!==n});else S.subjects.push({id:Date.now()+Math.random(),name:n,exam:""});save();draw()}
+ if(t.dataset.del){S.sessions=S.sessions.filter(function(s){return String(s.id)!==t.dataset.del});save();draw()}
+ if(t.dataset.sub){S.subjects=S.subjects.filter(function(s){return String(s.id)!==t.dataset.sub});save();draw()}
+ if(t.dataset.day){sel=t.dataset.day;tabs[0].click()}});
+tui();draw();
+$("signout").onclick=function(){try{localStorage.removeItem("st-session")}catch(e){}location.reload()};
+}
+
+(function(){
+var $=function(i){return document.getElementById(i)};
+var mode="in";
+function users(){try{return JSON.parse(localStorage.getItem("st-users")||"[]")}catch(e){return[]}}
+function hex(buf){return Array.prototype.map.call(new Uint8Array(buf),function(b){return b.toString(16).padStart(2,"0")}).join("")}
+async function hash(pw,salt){
+  if(!(window.crypto&&crypto.subtle))return salt+pw;
+  return hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(salt+":"+pw)));
+}
+function setMode(m){
+  mode=m;var up=m==="up";
+  $("a-in").setAttribute("aria-selected",!up);$("a-up").setAttribute("aria-selected",up);
+  $("f-name").hidden=!up;$("f-pass2").hidden=!up;
+  $("a-go").textContent=up?"Create account":"Sign in";
+  $("a-pass").autocomplete=up?"new-password":"current-password";
+  $("a-err").textContent="";
+}
+$("a-in").onclick=function(){setMode("in")};
+$("a-up").onclick=function(){setMode("up")};
+function fail(m){$("a-err").textContent=m}
+async function submit(){
+  var email=$("a-email").value.trim().toLowerCase(),pw=$("a-pass").value,list=users();
+  if(!/^\S+@\S+\.\S+$/.test(email))return fail("Enter a valid email address.");
+  if(mode==="up"){
+    var name=$("a-name").value.trim();
+    if(!name)return fail("Enter your name.");
+    if(pw.length<6)return fail("Use a password of at least 6 characters.");
+    if(pw!==$("a-pass2").value)return fail("The two passwords don't match.");
+    if(list.some(function(u){return u.email===email}))return fail("That email already has an account. Sign in instead.");
+    var salt=hex(crypto.getRandomValues?crypto.getRandomValues(new Uint8Array(12)):new Uint8Array(12));
+    var u={email:email,name:name,salt:salt,hash:await hash(pw,salt)};
+    list.push(u);
+    try{localStorage.setItem("st-users",JSON.stringify(list))}catch(e){return fail("This browser won't let the page store accounts.")}
+    return enter(u);
+  }
+  var found=list.filter(function(x){return x.email===email})[0];
+  if(!found||found.hash!==await hash(pw,found.salt))return fail("Email or password is wrong.");
+  enter(found);
+}
+function enter(u){
+  try{localStorage.setItem("st-session",u.email)}catch(e){}
+  $("a-pass").value=$("a-pass2").value="";
+  boot(u.email,u.name);
+}
+$("a-go").onclick=submit;
+["a-name","a-email","a-pass","a-pass2"].forEach(function(id){$(id).onkeydown=function(e){if(e.key==="Enter")submit()}});
+var sess=null;try{sess=localStorage.getItem("st-session")}catch(e){}
+var me=sess&&users().filter(function(x){return x.email===sess})[0];
+if(me)boot(me.email,me.name);
+})();
+</script>
+</body>
+</html>
